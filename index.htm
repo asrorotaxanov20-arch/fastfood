@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dunyo Ovqatlari - Asosiy Sahifa</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Search Box in Hero */
+        .hero-search {
+            max-width: 600px;
+            margin: 30px auto;
+            display: flex;
+            gap: 15px;
+            animation: slideDown 0.8s ease 0.6s both;
+        }
+        
+        .hero-search input {
+            flex: 1;
+            padding: 18px 25px;
+            font-size: 1rem;
+            border: 2px solid rgba(201, 162, 39, 0.3);
+            border-radius: 50px;
+            background: rgba(22, 33, 62, 0.9);
+            color: white;
+            outline: none;
+            transition: var(--transition);
+        }
+        
+        .hero-search input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 20px rgba(201, 162, 39, 0.2);
+        }
+        
+        .hero-search button {
+            padding: 18px 35px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 50px;
+            color: #000;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .hero-search button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(201, 162, 39, 0.4);
+        }
+        
+        /* Quick Links Section */
+        .quick-links {
+            padding: 80px 0;
+            background: rgba(22, 33, 62, 0.5);
+        }
+        
+        .quick-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .quick-link-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .quick-link-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow);
+        }
+        
+        .quick-link-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .quick-link-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .quick-link-card p {
+            color: var(--text-muted);
+        }
+        
+        /* Featured Foods */
+        .featured-section {
+            padding: 80px 0;
+        }
+        
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        /* Popular Searches */
+        .popular-searches {
+            padding: 60px 0;
+            text-align: center;
+        }
+        
+        .popular-tags {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .popular-tag {
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--primary-color);
+            border-radius: 30px;
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .popular-tag:hover {
+            background: var(--primary-color);
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-icon">🥘</span>
+                <span class="logo-text">DunyoOvqatlari</span>
+            </div>
+            <nav class="nav">
+                <a href="index.htm" class="nav-link active">Bosh sahifa</a>
+                <a href="search.htm" class="nav-link">Qidiruv</a>
+                <a href="retseptlar.htm" class="nav-link">Retseptlar</a>
+            </nav>
+            <div class="cart-btn">
+                <span class="cart-icon">🛒</span>
+                <span class="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-title">Dunyo Ovqatlari</h1>
+            <p class="hero-subtitle">200+ ta taom retsepti bitta saytda</p>
+            
+            <!-- Search in Hero -->
+            <div class="hero-search">
+                <input type="text" id="heroSearchInput" placeholder="Taom qidiring (masalan: osh, pizza, sharbat)...">
+                <button onclick="heroSearch()">Izlash 🔍</button>
+            </div>
+            
+            <div class="hero-buttons">
+                <a href="#menu" class="btn btn-primary">Menyuni ko'rish</a>
+                <a href="search.htm" class="btn btn-secondary">Barcha taomlar</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Links -->
+    <section class="quick-links">
+        <div class="container">
+            <h2 class="section-title">Sayt bo'ylab harakatlaning</h2>
+            <div class="quick-links-grid">
+                <a href="search.htm" class="quick-link-card">
+                    <span class="quick-link-icon">🔍</span>
+                    <h3>Qidiruv</h3>
+                    <p>Taomlarni nomi bo'yicha qidiring</p>
+                </a>
+                <a href="retseptlar.htm" class="quick-link-card">
+                    <span class="quick-link-icon">📖</span>
+                    <h3>Retseptlar</h3>
+                    <p>100+ ta batafsil retsept</p>
+                </a>
+                <div class="quick-link-card" onclick="openFoodPage('osh.htm')">
+                    <span class="quick-link-icon">🍚</span>
+                    <h3>Osh</h3>
+                    <p>Milliy osh retsepti</p>
+                </div>
+                <div class="quick-link-card" onclick="openFoodPage('sharbat.htm')">
+                    <span class="quick-link-icon">🧃</span>
+                    <h3>Sharbatlar</h3>
+                    <p>Ichimliklar va sharbatlar</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Searches -->
+    <section class="popular-searches">
+        <div class="container">
+            <h2 class="section-title">Ommabop qidiruvlar</h2>
+            <div class="popular-tags">
+                <span class="popular-tag" onclick="quickSearch('osh')">🍚 Osh</span>
+                <span class="popular-tag" onclick="quickSearch('somsa')">🥟 Somsa</span>
+                <span class="popular-tag" onclick="quickSearch('manti')">🥟 Manti</span>
+                <span class="popular-tag" onclick="quickSearch('sharbat')">🧃 Sharbat</span>
+                <span class="popular-tag" onclick="quickSearch('pizza')">🍕 Pizza</span>
+                <span class="popular-tag" onclick="quickSearch('burger')">🍔 Burger</span>
+                <span class="popular-tag" onclick="quickSearch('coffee')">☕ Coffee</span>
+                <span class="popular-tag" onclick="quickSearch('shirinlik')">🍰 Shirinlik</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section class="menu" id="menu">
+        <div class="container">
+            <h2 class="section-title">Barcha Taomlar</h2>
+            <p class="section-subtitle">O'zingizga yoqqan taomlarni tanlang</p>
+            
+            <!-- Category Tabs -->
+            <div class="menu-tabs">
+                <button class="tab-btn active" data-category="all">Hammasi</button>
+                <button class="tab-btn" data-category="uzbek">O'zbek</button>
+                <button class="tab-btn" data-category="russian">Rossiya</button>
+                <button class="tab-btn" data-category="turkish">Turkiya</button>
+                <button class="tab-btn" data-category="italian">Italiya</button>
+                <button class="tab-btn" data-category="chinese">Xitoy</button>
+                <button class="tab-btn" data-category="indian">Hindiston</button>
+                <button class="tab-btn" data-category="desserts">Shirinliklar</button>
+                <button class="tab-btn" data-category="drinks">Ichimliklar</button>
+            </div>
+
+            <!-- Cards Grid -->
+            <div class="cards-grid">
+                <!-- UZBEK -->
+                <div class="card menu-card" data-category="uzbek" onclick="openFoodPage('osh.htm')">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400" alt="Osh">
+                        <div class="card-badges"><span class="badge badge-popular">Ommabop</span></div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Osh</h3>
+                        <p class="card-description">Milliy osh - mol go'shti, sabzi, guruch</p>
+                        <div class="card-footer">
+                            <span class="price">55,000 so'm</span>
+                            <button class="add-btn" onclick="event.stopPropagation(); addToCart('Osh', 55000)"><span>+</span> Qo'shish</button>
+                        </div>
+                    </div>
+                    <div class="card-hover">
+                        <div class="hover-content">
+                            <h4>Retsept</h4>
+                            <ul class="ingredients">
+                                <li>🥩 500g mol go'shti</li>
+                                <li>🥕 4ta sabzi</li>
+                                <li>🧅 3ta piyoz</li>
+                                <li>🍚 1kg guruch</li>
+                            </ul>
+                            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">5.0</span></div>
+                            <button class="quick-add" onclick="event.stopPropagation(); openFoodPage('osh.htm')">Batafsil</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card menu-card" data-category="uzbek">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400" alt="Somsa">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Somsa</h3>
+                        <p class="card-description">Xamirga o'ralgan go'shti</p>
+                        <div class="card-footer">
+                            <span class="price">15,000 so'm</span>
+                            <button class="add-btn" onclick="addToCart('Somsa', 15000)"><span>+</span> Qo'shish</button>
+                        </div>
+                    </div>
+                    <div class="card-hover">
+                        <div class="hover-content">
+                            <h4>Retsept</h4>
+                            <ul class="ingredients">
+                                <li>🥩 300g go'sht</li>
+                                <li>🧅 2ta piyoz</li>
+                                <li>🥟 xamir</li>
+                                <li>🌶️ ziravorlar</li>
+                            </ul>
+                            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">4.9</span></div>
+                            <button class="quick-add" onclick="addToCart('Somsa', 15000)">Tez buyurtma</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card menu-card" data-category="uzbek">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400" alt="Manti">
+                        <div class="card-badges"><span class="badge badge-new">Yangi</span></div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Manti</h3>
+                        <p class="card-description">Bug'doy xamir, go'sht, piyoz</p>
+                        <div class="card-footer">
+                            <span class="price">18,000 so'm</span>
+                            <button class="add-btn" onclick="addToCart('Manti', 18000)"><span>+</span> Qo'shish</button>
+                        </div>
+                    </div>
+                    <div class="card-hover">
+                        <div class="hover-content">
+                            <h4>Retsept</h4>
+                            <ul class="ingredients">
+                                <li>🥩 400g go'sht</li>
+                                <li>🧅 3ta piyoz</li>
+                                <li>🥟 xamir</li>
+                                <li>🧄 sarimsoq sousi</li>
+                            </ul>
+                            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">4.8</span></div>
+                            <button class="quick-add" onclick="addToCart('Manti', 18000)">Tez buyurtma</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card menu-card" data-category="drinks" onclick="openFoodPage('sharbat.htm')">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400" alt="Fresh Juice">
+                        <div class="card-badges"><span class="badge badge-popular">Ommabop</span></div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Fresh Juice</h3>
+                        <p class="card-description">Yangidan siqilgan sharbat</p>
+                        <div class="card-footer">
+                            <span class="price">15,000 so'm</span>
+                            <button class="add-btn" onclick="event.stopPropagation(); addToCart('Fresh Juice', 15000)"><span>+</span> Qo'shish</button>
+                        </div>
+                    </div>
+                    <div class="card-hover">
+                        <div class="hover-content">
+                            <h4>Retsept</h4>
+                            <ul class="ingredients">
+                                <li>🍊 apelsin</li>
+                                <li>🍎 olma</li>
+                                <li>🥕 sabzi</li>
+                                <li>🍋 limon</li>
+                            </ul>
+                            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">4.8</span></div>
+                            <button class="quick-add" onclick="event.stopPropagation(); openFoodPage('sharbat.htm')">Batafsil</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ITALIAN -->
+                <div class="card menu-card" data-category="italian">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400" alt="Pizza">
+                        <div class="card-badges"><span class="badge badge-popular">Ommabop</span></div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Pizza Margherita</h3>
+                        <p class="card-description">Italian pizza</p>
+                        <div class="card-footer">
+                            <span class="price">55,000 so'm</span>
+                            <button class="add-btn" onclick="addToCart('Pizza Margherita', 55000)"><span>+</span> Qo'shish</button>
+                        </div>
+                    </div>
+                    <div class="card-hover">
+                        <div class="hover-content">
+                            <h4>Retsept</h4>
+                            <ul class="ingredients">
+                                <li>🍕 xamir</li>
+                                <li>🍅 pomidor</li>
+                                <li>🧀 mozzarella</li>
+                                <li>🌿 bazilik</li>
+                            </ul>
+                            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">5.0</span></div>
+                            <button class="quick-add" onclick="addToCart('Pizza Margherita', 55000)">Tez buyurtma</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card menu-card" data-category="italian">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400" alt="Pasta Carbonara">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Pasta Carbonara</h3>
+                        <p class="card-description">Italian makaron</p>
+                        <div class="card-footer">
+                            <span class="price">45,000 so'm</span>
+                            <button class="add-btn" onclick="addToCart('Pasta Carbonara', 45000)"><span>+</span> Qo'shish</button>
+                        </div>
+                    </div>
+                    <div class="card-hover">
+                        <div class="hover-content">
+                            <h4>Retsept</h4>
+                            <ul class="ingredients">
+                                <li>🍝 makaron</li>
+                                <li>🥓 bekon</li>
+                                <li>🥚 tuxum</li>
+                                <li>🧀 parmesan</li>
+                            </ul>
+                            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">4.9</span></div>
+                            <button class="quick-add" onclick="addToCart('Pasta Carbonara', 45000)">Tez buyurtma</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TURKISH -->
+                <div class="card menu-card" data-category="turkish">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400" alt="Doner">
+                        <div class="card-badges"><span class="badge badge-popular">Ommabop</span></div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Doner</h3>
+                        <p class="card-description">Turkish kebab</p>
+                        <div class="card-footer">
+                            <span class="price">35,000 so'm</span>
+                            <button class="add-btn" onclick="addToCart('Doner', 35000)"><span>+</span> Qo'shish</button>
+                        </div>
+                    </div>
+                    <div class="card-hover">
+                        <div class="hover-content">
+                            <h4>Retsept</h4>
+                            <ul class="ingredients">
+                                <li>🥩 400g go'sht</li>
+                                <li>🧅 piyoz</li>
+                                <li>🧄 sarimsoq</li>
+                                <li>🫓 non</li>
+                            </ul>
+                            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">4.9</span></div>
+                            <button class="quick-add" onclick="addToCart('Doner', 35000)">Tez buyurtma</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card menu-card" data-category="turkish">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1563729768-6af7c46b6eb5?w=400" alt="Baklava">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Baklava</h3>
+                        <p class="card-description">Turkish shirinlik</p>
+                        <div class="card-footer">
+                            <span class="price">25,000 so'm</span>
+                            <button class="add-btn" onclick="addToCart('Baklava', 25000)"><span>+</span> Qo'shish</button>
+                        </div>
+                    </div>
+                    <div class="card-hover">
+                        <div class="hover-content">
+                            <h4>Retsept</h4>
+                            <ul class="ingredients">
+                                <li>🥡 yufka</li>
+                                <li>🧈 saryog'</li>
+                                <li>🥜 yong'oq</li>
+                                <li>🍬 shakar</li>
+                            </ul>
+                            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">5.0</span></div>
+                            <button class="quick-add" onclick="addToCart('Baklava', 25000)">Tez buyurtma</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DESSERTS -->
+                <div class="card menu-card" data-category="desserts">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400" alt="Chocolate Cake">
+                        <div class="card-badges"><span class="badge badge-popular">Ommabop</span></div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Chocolate Cake</h3>
+                        <p class="card-description">Shokoladli tort</p>
+                        <div class="card-footer">
+                            <span class="price">40,000 so'm</span>
+                            <button class="add-btn" onclick="addToCart('Chocolate Cake', 40000)"><span>+</span> Qo'shish</button>
+                        </div>
+                    </div>
+                    <div class="card-hover">
+                        <div class="hover-content">
+                            <h4>Retsept</h4>
+                            <ul class="ingredients">
+                                <li>🍫 shokolad</li>
+                                <li>🥚 tuxum</li>
+                                <li>🥡 un</li>
+                                <li>🍬 shakar</li>
+                            </ul>
+                            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">5.0</span></div>
+                            <button class="quick-add" onclick="addToCart('Chocolate Cake', 40000)">Tez buyurtma</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DRINKS -->
+                <div class="card menu-card" data-category="drinks">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400" alt="Cola">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Coca-Cola</h3>
+                        <p class="card-description">Kola</p>
+                        <div class="card-footer">
+                            <span class="price">8,000 so'm</span>
+                            <button class="add-btn" onclick="addToCart('Coca-Cola', 8000)"><span>+</span> Qo'shish</button>
+                        </div>
+                    </div>
+                    <div class="card-hover">
+                        <div class="hover-content">
+                            <h4>Haqida</h4>
+                            <ul class="ingredients">
+                                <li>🥤 0.5 litr</li>
+                                <li>🧊 sovuq</li>
+                                <li>⚡ energiya</li>
+                            </ul>
+                            <div class="rating"><span class="stars">★★★★☆</span><span class="rating-num">4.5</span></div>
+                            <button class="quick-add" onclick="addToCart('Coca-Cola', 8000)">Tez buyurtma</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card menu-card" data-category="drinks">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1625776861065-c7ba2395e6bb?w=400" alt="Milkshake">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Milkshake</h3>
+                        <p class="card-description">Sutli kokteyl</p>
+                        <div class="card-footer">
+                            <span class="price">18,000 so'm</span>
+                            <button class="add-btn" onclick="addToCart('Milkshake', 18000)"><span>+</span> Qo'shish</button>
+                        </div>
+                    </div>
+                    <div class="card-hover">
+                        <div class="hover-content">
+                            <h4>Retsept</h4>
+                            <ul class="ingredients">
+                                <li>🥛 sut</li>
+                                <li>🍦 muzqaymoq</li>
+                                <li>🍫 shokolad</li>
+                                <li>🍓 meva</li>
+                            </ul>
+                            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">4.8</span></div>
+                            <button class="quick-add" onclick="addToCart('Milkshake', 18000)">Tez buyurtma</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card menu-card" data-category="drinks">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400" alt="Coffee">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Coffee</h3>
+                        <p class="card-description">Qahva</p>
+                        <div class="card-footer">
+                            <span class="price">12,000 so'm</span>
+                            <button class="add-btn" onclick="addToCart('Coffee', 12000)"><span>+</span> Qo'shish</button>
+                        </div>
+                    </div>
+                    <div class="card-hover">
+                        <div class="hover-content">
+                            <h4>Retsept</h4>
+                            <ul class="ingredients">
+                                <li>☕ qahva</li>
+                                <li>🥛 sut</li>
+                                <li>🍬 shakar</li>
+                                <li>🧊 muz</li>
+                            </ul>
+                            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">4.8</span></div>
+                            <button class="quick-add" onclick="addToCart('Coffee', 12000)">Tez buyurtma</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card menu-card" data-category="desserts">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1563729768-6af7c46b6eb5?w=400" alt="Ice Cream">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Ice Cream</h3>
+                        <p class="card-description">Muzqaymoq</p>
+                        <div class="card-footer">
+                            <span class="price">15,000 so'm</span>
+                            <button class="add-btn" onclick="addToCart('Ice Cream', 15000)"><span>+</span> Qo'shish</button>
+                        </div>
+                    </div>
+                    <div class="card-hover">
+                        <div class="hover-content">
+                            <h4>Retsept</h4>
+                            <ul class="ingredients">
+                                <li>🥛 sut</li>
+                                <li>🥚 tuxum</li>
+                                <li>🍬 shakar</li>
+                                <li>🍧 aroma</li>
+                            </ul>
+                            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">4.9</span></div>
+                            <button class="quick-add" onclick="addToCart('Ice Cream', 15000)">Tez buyurtma</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 50px;">
+                <a href="search.htm" class="btn btn-primary" style="padding: 18px 50px; font-size: 1.1rem;">
+                    Barcha taomlarni ko'rish →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Modal -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h3>Savat</h3>
+                <button class="close-cart" onclick="closeCart()">×</button>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <p class="empty-cart">Savat bo'sh</p>
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span>Jami:</span>
+                    <span id="totalPrice">0 so'm</span>
+                </div>
+                <button class="checkout-btn" onclick="checkout()">Buyurtma berish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <h2 class="section-title">Biz bilan bog'lanish</h2>
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <span class="contact-icon">📍</span>
+                    <h4>Manzil</h4>
+                    <p>Toshkent sh, Chilonzor</p>
+                </div>
+                <div class="contact-card">
+                    <span class="contact-icon">📞</span>
+                    <h4>Telefon</h4>
+                    <p>+998 90 123-45-67</p>
+                </div>
+                <div class="contact-card">
+                    <span class="contact-icon">🕐</span>
+                    <h4>Ish vaqti</h4>
+                    <p>Har kuni 10:00 - 23:00</p>
+                </div>
+                <div class="contact-card">
+                    <span class="contact-icon">🚚</span>
+                    <h4>Yetkazib berish</h4>
+                    <p>Tez va bepul</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 DunyoOvqatlari. Barcha huquqlar himoyalangan.</p>
+        </div>
+    </footer>
+
+    <script src="java.js"></script>
+    <script>
+        // Hero Search Function
+        function heroSearch() {
+            const query = document.getElementById('heroSearchInput').value.toLowerCase();
+            if (query) {
+                // Save query and redirect to search
+                localStorage.setItem('searchQuery', query);
+                window.location.href = 'search.htm';
+            }
+        }
+        
+        // Enter key for hero search
+        document.getElementById('heroSearchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                heroSearch();
+            }
+        });
+        
+        // Quick search from tags
+        function quickSearch(query) {
+            localStorage.setItem('searchQuery', query);
+            window.location.href = 'search.htm';
+        }
+        
+        // Open food page
+        function openFoodPage(page) {
+            window.location.href = page;
+        }
+        
+        // Load search query on page load
+        window.addEventListener('load', function() {
+            const query = localStorage.getItem('searchQuery');
+            if (query) {
+                document.getElementById('heroSearchInput').value = query;
+                localStorage.removeItem('searchQuery');
+            }
+        });
+    </script>
+</body>
+</html>

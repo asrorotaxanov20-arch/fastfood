@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qidiruv - Dunyo Ovqatlari</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .search-container {
+            max-width: 800px;
+            margin: 150px auto 50px;
+            padding: 0 20px;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 18px 25px;
+            font-size: 1.1rem;
+            border: 2px solid rgba(201, 162, 39, 0.3);
+            border-radius: 50px;
+            background: rgba(22, 33, 62, 0.9);
+            color: white;
+            outline: none;
+            transition: var(--transition);
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 20px rgba(201, 162, 39, 0.2);
+        }
+        
+        .search-btn {
+            padding: 18px 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 50px;
+            color: #000;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .search-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(201, 162, 39, 0.4);
+        }
+        
+        .results-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        .result-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+            animation: fadeInUp 0.6s ease both;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow);
+        }
+        
+        .result-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .result-card-content {
+            padding: 20px;
+        }
+        
+        .result-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .result-card p {
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+        
+        .result-card a {
+            display: inline-block;
+            padding: 10px 25px;
+            background: var(--primary-color);
+            color: #000;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .result-card a:hover {
+            transform: scale(1.05);
+        }
+        
+        .no-results {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 50px;
+        }
+        
+        .results-count {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-icon">🔍</span>
+                <span class="logo-text">Qidiruv</span>
+            </div>
+            <nav class="nav">
+                <a href="index.htm" class="nav-link">Bosh sahifa</a>
+                <a href="search.htm" class="nav-link active">Qidiruv</a>
+                <a href="retseptlar.htm" class="nav-link">Retseptlar</a>
+            </nav>
+            <div class="cart-btn">
+                <span class="cart-icon">🛒</span>
+                <span class="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="search-container">
+        <h1 class="hero-title" style="text-align: center; margin-bottom: 30px;">500+ Taom Qidirish</h1>
+        <div class="search-box">
+            <input type="text" class="search-input" id="searchInput" placeholder="Masalan: shirniy, sho'rva, burger, pizza, sushi...">
+            <button class="search-btn" onclick="searchFood()">Izlash</button>
+        </div>
+        
+        <p class="results-count" id="resultsCount"></p>
+        <div class="results-container" id="results"></div>
+    </div>
+
+    <script>
+        // 500 ta taom bazasi
+        const foods = [
+            // UZBEK TAOMLARI (1-50)
+            {id: 1, name: "Osh", category: "O'zbek", description: "Milliy osh", price: "55,000", image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400"},
+            {id: 2, name: "Somsa", category: "O'zbek", description: "Xamirga o'ralgan go'shti", price: "15,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 3, name: "Manti", category: "O'zbek", description: "Bug'doy xamir, go'sht", price: "18,000", image: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400"},
+            {id: 4, name: "Lag'mon", category: "O'zbek", description: "Uzun xamir, go'shtli sous", price: "38,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 5, name: "Shashlik", category: "O'zbek", description: "Qo'y go'shti shashlik", price: "45,000", image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"},
+            {id: 6, name: "Chuchvara", category: "O'zbek", description: "Kichik xamir, go'sht", price: "32,000", image: "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=400"},
+            {id: 7, name: "Osh Shorva", category: "O'zbek", description: "Go'shtli sho'rva", price: "35,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 8, name: "Mastava", category: "O'zbek", description: "Kartoshkali sho'rva", price: "28,000", image: "https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=400"},
+            {id: 9, name: "Qazi Shorva", category: "O'zbek", description: "Qazili sho'rva", price: "42,000", image: "https://images.unsplash.com/photo-1604160450925-077763602694?w=400"},
+            {id: 10, name: "Norin", category: "O'zbek", description: "Milliy taom", price: "40,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 11, name: "Tushberi", category: "O'zbek", description: "Go'shtli sho'rva", price: "35,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 12, name: "Dimlama", category: "O'zbek", description: "Sabzavotli go'sht", price: "48,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 13, name: "Kavob", category: "O'zbek", description: "Qovurilgan go'sht", price: "42,000", image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"},
+            {id: 14, name: "Shirin Non", category: "O'zbek", description: "Shirin non", price: "22,000", image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"},
+            {id: 15, name: "Pakana", category: "O'zbek", description: "Shirinlik", price: "20,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 16, name: "Nisholda", category: "O'zbek", description: "Shirinlik", price: "25,000", image: "https://images.unsplash.com/photo-1563729768-6af7c46b6eb5?w=400"},
+            {id: 17, name: "Milliy Assorti", category: "O'zbek", description: "Salat", price: "22,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            {id: 18, name: "Ko'k Salat", category: "O'zbek", description: "Salat", price: "18,000", image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400"},
+            {id: 19, name: "KFC Tovuq", category: "O'zbek", description: "Fast food", price: "25,000", image: "https://images.unsplash.com/photo-1529694157872-4e0c0f3b238b?w=400"},
+            {id: 20, name: "Hot Dog", category: "O'zbek", description: "Fast food", price: "12,000", image: "https://images.unsplash.com/photo-1612392062631-94dd858cba88?w=400"},
+            {id: 21, name: "French Fries", category: "O'zbek", description: "Kartoshka fri", price: "10,000", image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400"},
+            {id: 22, name: "Beshtik", category: "O'zbek", description: "Milliy shirinlik", price: "15,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 23, name: "Chak-chak", category: "O'zbek", description: "Shirinlik", price: "28,000", image: "https://images.unsplash.com/photo-1563729768-6af7c46b6eb5?w=400"},
+            {id: 24, name: "Guruch palov", category: "O'zbek", description: "Palov", price: "50,000", image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400"},
+            {id: 25, name: "Sho'rva", category: "O'zbek", description: "Sho'rva", price: "30,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 26, name: "Kukjain", category: "O'zbek", description: "Milliy ichimlik", price: "8,000", image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400"},
+            {id: 27, name: "Ayron", category: "O'zbek", description: "Ichimlik", price: "5,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+            {id: 28, name: "Kefir", category: "O'zbek", description: "Ichimlik", price: "6,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+            {id: 29, name: "Sut", category: "O'zbek", description: "Ichimlik", price: "5,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+            {id: 30, name: "Kompot", category: "O'zbek", description: "Ichimlik", price: "8,000", image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400"},
+            {id: 31, name: "Mantiqaymoq", category: "O'zbek", description: "Muzqaymoq", price: "15,000", image: "https://images.unsplash.com/photo-1563729768-6af7c46b6eb5?w=400"},
+            {id: 32, name: "Firfir", category: "O'zbek", description: "Fast food", price: "20,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 33, name: "Kotlet", category: "O'zbek", description: "Kotlet", price: "25,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 34, name: "Belyashi", category: "O'zbek", description: "Non yopish", price: "18,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 35, name: "Obi-hamon", category: "O'zbek", description: "Ichimlik", price: "12,000", image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400"},
+            {id: 36, name: "Bo'g'irsoq", category: "O'zbek", description: "Milliy taom", price: "35,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 37, name: "Qo'g'irpichoq", category: "O'zbek", description: "Milliy taom", price: "40,000", image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"},
+            {id: 38, name: "Jiz-biz", category: "O'zbek", description: "Milliy taom", price: "32,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 39, name: "Uskama", category: "O'zbek", description: "Milliy taom", price: "38,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 40, name: "Mays", category: "O'zbek", description: "Shirinlik", price: "18,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 41, name: "Suvay", category: "O'zbek", description: "Shirinlik", price: "15,000", image: "https://images.unsplash.com/photo-1563729768-6af7c46b6eb5?w=400"},
+            {id: 42, name: "Rushan", category: "O'zbek", description: "Shirinlik", price: "20,000", image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"},
+            {id: 43, name: "Halva", category: "O'zbek", description: "Shirinlik", price: "25,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 44, name: "Kurtoza", category: "O'zbek", description: "Shirinlik", price: "18,000", image: "https://images.unsplash.com/photo-1563729768-6af7c46b6eb5?w=400"},
+            {id: 45, name: "Pashmak", category: "O'zbek", description: "Shirinlik", price: "22,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 46, name: "Lovlay", category: "O'zbek", description: "Shirinlik", price: "15,000", image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"},
+            {id: 47, name: "Karam", category: "O'zbek", description: "Salat", price: "15,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            {id: 48, name: "Sog'ana", category: "O'zbek", description: "Salat", price: "12,000", image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400"},
+            {id: 49, name: "Rediska", category: "O'zbek", description: "Salat", price: "8,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            {id: 50, name: "Piyoz", category: "O'zbek", description: "Sabzavot", price: "5,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            
+            // RUSSIAN TAOMLARI (51-100)
+            {id: 51, name: "Borscht", category: "Rossiya", description: "Lavash sho'rva", price: "32,000", image: "https://images.unsplash.com/photo-1529694157872-4e0c0f3b238b?w=400"},
+            {id: 52, name: "Pelmeni", category: "Rossiya", description: "Russian manti", price: "35,000", image: "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400"},
+            {id: 53, name: "Shchi", category: "Rossiya", description: "Kappeli sho'rva", price: "28,000", image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400"},
+            {id: 54, name: "Stroganov", category: "Rossiya", description: "Go'shtli qovurma", price: "48,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 55, name: "Kotlet", category: "Rossiya", description: "Kotlet", price: "25,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 56, name: "Olivier", category: "Rossiya", description: "Russian salad", price: "30,000", image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400"},
+            {id: 57, name: "Blini", category: "Rossiya", description: "Russian xamirturush", price: "18,000", image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400"},
+            {id: 58, name: "Okroshka", category: "Rossiya", description: "Sovuq sho'rva", price: "22,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+            {id: 59, name: "Sirniki", category: "Rossiya", description: "Tvorogli kotlet", price: "20,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 60, name: "Vareniki", category: "Rossiya", description: "Shirin manti", price: "25,000", image: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400"},
+            {id: 61, name: "Kasha", category: "Rossiya", description: "Grechka", price: "15,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 62, name: "Solanka", category: "Rossiya", description: "Go'shtli sho'rva", price: "35,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 63, name: "Rassolnik", category: "Rossiya", description: "Sho'rva", price: "30,000", image: "https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=400"},
+            {id: 64, name: "Ukha", category: "Rossiya", description: "Baliq sho'rva", price: "38,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 65, name: "Kulibiy", category: "Rossiya", description: "Pirojniy", price: "22,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 66, name: "Pirozhki", category: "Rossiya", description: "Pishiriq", price: "15,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 67, name: "Syrniki", category: "Rossiya", description: "Pishloqli", price: "18,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 68, name: "Grechnevaya kasha", category: "Rossiya", description: "Grechka", price: "12,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 69, name: "Risovaya kasha", category: "Rossiya", description: "Guruch kasha", price: "10,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 70, name: "Mannaya kasha", category: "Rossiya", description: "Manna", price: "8,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 71, name: "Oвсянка", category: "Rossiya", description: "Yulaf", price: "10,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 72, name: "Kompot iz suhofruktov", category: "Rossiya", description: "Kompot", price: "12,000", image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400"},
+            {id: 73, name: "Kissel", category: "Rossiya", description: "Ichimlik", price: "8,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+            {id: 74, name: "Mors", category: "Rossiya", description: "Meva ichimlik", price: "10,000", image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400"},
+            {id: 75, name: "Sbiten", category: "Rossiya", description: "Asal ichimlik", price: "12,000", image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400"},
+            {id: 76, name: "Krujka", category: "Rossiya", description: "Pivo", price: "15,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+            {id: 77, name: "Vodka", category: "Rossiya", description: "Ichimlik", price: "25,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+            {id: 78, name: "Kvas", category: "Rossiya", description: "Ichimlik", price: "8,000", image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400"},
+            {id: 79, name: "Smetana", category: "Rossiya", description: "Smetana", price: "10,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+            {id: 80, name: "Tvorog", category: "Rossiya", description: "Tvorog", price: "15,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 81, name: "Ryajiki", category: "Rossiya", description: "Kartoshkali kotlet", price: "22,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 82, name: "Zrazy", category: "Rossiya", description: "Go'shtli", price: "28,000", image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"},
+            {id: 83, name: "Kotleti po-kievski", category: "Rossiya", description: "Tovuq kotlet", price: "32,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 84, name: "Draniki", category: "Rossiya", description: "Kartoshkali", price: "20,000", image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400"},
+            {id: 85, name: "Kartoshka po-seldski", category: "Rossiya", description: "Kartoshka", price: "18,000", image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400"},
+            {id: 86, name: "Olivye", category: "Rossiya", description: "Salat", price: "25,000", image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400"},
+            {id: 87, name: "Seledka pod shuboi", category: "Rossiya", description: "Salat", price: "28,000", image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400"},
+            {id: 88, name: "Vinaigrett", category: "Rossiya", description: "Salat", price: "20,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            {id: 89, name: "Mimoza", category: "Rossiya", description: "Salat", price: "22,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            {id: 90, name: "Gribnoy salat", category: "Rossiya", description: "Zamburug' salat", price: "25,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            {id: 91, name: "Kraboviy sabot", category: "Rossiya", description: "Salat", price: "32,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            {id: 92, name: "Semyga pod mayonezom", category: "Rossiya", description: "Salat", price: "28,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            {id: 93, name: "Kalbasa", category: "Rossiya", description: "Kolbasa", price: "20,000", image: "https://images.unsplash.com/photo-1529694157872-4e0c0f3b238b?w=400"},
+            {id: 94, name: "Domashnyaya kolbasa", category: "Rossiya", description: "Kolbasa", price: "35,000", image: "https://images.unsplash.com/photo-1529694157872-4e0c0f3b238b?w=400"},
+            {id: 95, name: "Salo", category: "Rossiya", description: "Salo", price: "30,000", image: "https://images.unsplash.com/photo-1529694157872-4e0c0f3b238b?w=400"},
+            {id: 96, name: "Khleb.sol", category: "Rossiya", description: "Non tuzlangan", price: "8,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 97, name: "Baton", category: "Rossiya", description: "Non", price: "5,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 98, name: "Bulka", category: "Rossiya", description: "Non", price: "4,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 99, name: "Lohin", category: "Rossiya", description: "Non", price: "6,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 100, name: "Kroshen", category: "Rossiya", description: "Non", price: "7,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            
+            // TURKISH TAOMLARI (101-150)
+            {id: 101, name: "Doner", category: "Turkiya", description: "Turkish kebab", price: "35,000", image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400"},
+            {id: 102, name: "Shawarma", category: "Turkiya", description: "Arabic kebab", price: "28,000", image: "https://images.unsplash.com/photo-1561651823-34feb02250e4?w=400"},
+            {id: 103, name: "Adana Kebab", category: "Turkiya", description: "Spicy kebab", price: "42,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 104, name: "Urfa Kebab", category: "Turkiya", description: "Kebab", price: "42,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 105, name: "Lahmacun", category: "Turkiya", description: "Turkish pizza", price: "20,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 106, name: "Simit", category: "Turkiya", description: "Turkish non", price: "8,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 107, name: "Pide", category: "Turkiya", description: "Turkish pizza", price: "32,000", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"},
+            {id: 108, name: "Kunefe", category: "Turkiya", description: "Shirinlik", price: "28,000", image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400"},
+            {id: 109, name: "Baklava", category: "Turkiya", description: "Shirinlik", price: "25,000", image: "https://images.unsplash.com/photo-1563729768-6af7c46b6eb5?w=400"},
+            {id: 110, name: "Lokum", category: "Turkiya", description: "Shirinlik", price: "20,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 111, name: "Künefe", category: "Turkiya", description: "Shirinlik", price: "30,000", image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400"},
+            {id: 112, name: "Katlı Pide", category: "Turkiya", description: "Pide", price: "35,000", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"},
+            {id: 113, name: "Karalahana Çorbası", category: "Turkiya", description: "Sho'rva", price: "22,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 114, name: "Mercimek Çorbası", category: "Turkiya", description: "Sho'rva", price: "18,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 115, name: "Tarhana Çorbası", category: "Turkiya", description: "Sho'rva", price: "20,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 116, name: "İçli Köfte", category: "Turkiya", description: "Kofta", price: "28,000", image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"},
+            {id: 117, name: "İskender", category: "Turkiya", description: "Kebab", price: "45,000", image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400"},
+            {id: 118, name: "Tantuni", category: "Turkiya", description: "Go'sht", price: "32,000", image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"},
+            {id: 119, name: "Şiş", category: "Turkiya", description: "Shashlik", price: "40,000", image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"},
+            {id: 120, name: "Köfte", category: "Turkiya", description: "Kofta", price: "28,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 121, name: "Tavuk Şiş", category: "Turkiya", description: "Tovuq shashlik", price: "32,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 122, name: "Balık Şiş", category: "Turkiya", description: "Baliq shashlik", price: "42,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 123, name: "Beyti", category: "Turkiya", description: "Go'sht", price: "38,000", image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"},
+            {id: 124, name: "Ali Nazik", category: "Turkiya", description: "Kebab", price: "40,000", image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400"},
+            {id: 125, name: "Patlıcan Salatası", category: "Turkiya", description: "Salat", price: "18,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            {id: 126, name: "Çoban Salatası", category: "Turkiya", description: "Salat", price: "15,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            {id: 127, name: "Haydari", category: "Turkiya", description: "Dip", price: "12,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            {id: 128, name: "Acılı Ezme", category: "Turkiya", description: "Sous", price: "10,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            {id: 129, name: "Humus", category: "Turkiya", description: "No'xatli", price: "15,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            {id: 130, name: "Tarator", category: "Turkiya", description: "Sous", price: "12,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            {id: 131, name: "Ayran", category: "Turkiya", description: "Ichimlik", price: "6,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+            {id: 132, name: "Türk Kahvesi", category: "Turkiya", description: "Qahva", price: "15,000", image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400"},
+            {id: 133, name: "Çay", category: "Turkiya", description: "Choy", price: "5,000", image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400"},
+            {id: 134, name: "Şarap", category: "Turkiya", description: "Sharob", price: "35,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+            {id: 135, name: "Rakı", category: "Turkiya", description: "Ichimlik", price: "40,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+            {id: 136, name: "Börek", category: "Turkiya", description: "Pishiriq", price: "22,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 137, name: "Sigara Börek", category: "Turkiya", description: "Pishiriq", price: "18,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 138, name: "Su Börek", category: "Turkiya", description: "Pishiriq", price: "25,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 139, name: "Gözleme", category: "Turkiya", description: "Non", price: "20,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 140, name: "Lavaş", category: "Turkiya", description: "Non", price: "8,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 141, name: "Ekmek", category: "Turkiya", description: "Non", price: "5,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 142, name: "Somun", category: "Turkiya", description: "Non", price: "6,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 143, name: "Pide Ekmeği", category: "Turkiya", description: "Non", price: "7,000", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400"},
+            {id: 144, name: "Kıymalı Pide", category: "Turkiya", description: "Pide", price: "28,000", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"},
+            {id: 145, name: "Kasar Pidesi", category: "Turkiya", description: "Pide", price: "30,000", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"},
+            {id: 146, name: "Kuşbaşılı Pide", category: "Turkiya", description: "Pide", price: "35,000", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"},
+            {id: 147, name: "Sucuklu Yumurta", category: "Turkiya", description: "Tuxum", price: "22,000", image: "https://images.unsplash.com/photo-1529694157872-4e0c0f3b238b?w=400"},
+            {id: 148, name: "Menemen", category: "Turkiya", description: "Tuxum", price: "20,000", image: "https://images.unsplash.com/photo-1529694157872-4e0c0f3b238b?w=400"},
+            {id: 149, name: "Kaygana", category: "Turkiya", description: "Tuxum", price: "18,000", image: "https://images.unsplash.com/photo-1529694157872-4e0c0f3b238b?w=400"},
+            {id: 150, name: "Haşlama Yumurta", category: "Turkiya", description: "Tuxum", price: "12,000", image: "https://images.unsplash.com/photo-1529694157872-4e0c0f3b238b?w=400"},
+            
+            // ITALIAN TAOMLARI (151-200)
+            {id: 151, name: "Pizza Margherita", category: "Italiya", description: "Italian pizza", price: "55,000", image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400"},
+            {id: 152, name: "Pizza Pepperoni", category: "Italiya", description: "Pizza", price: "60,000", image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400"},
+            {id: 153, name: "Pizza 4 Formaggi", category: "Italiya", description: "4 pishloq pizza", price: "65,000", image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400"},
+            {id: 154, name: "Pizza Capricciosa", category: "Italiya", description: "Pizza", price: "58,000", image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400"},
+            {id: 155, name: "Pizza Quattro Stagioni", category: "Italiya", description: "Pizza", price: "62,000", image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400"},
+            {id: 156, name: "Pasta Carbonara", category: "Italiya", description: "Makaron", price: "45,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 157, name: "Pasta Bolognese", category: "Italiya", description: "Makaron", price: "42,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 158, name: "Pasta Alfredo", category: "Italiya", description: "Makaron", price: "40,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 159, name: "Pasta Pesto", category: "Italiya", description: "Makaron", price: "38,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 160, name: "Pasta Arrabiata", category: "Italiya", description: "Achchiq makaron", price: "36,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 161, name: "Risotto", category: "Italiya", description: "Italian guruch", price: "42,000", image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=400"},
+            {id: 162, name: "Lasagna", category: "Italiya", description: "Lasagna", price: "48,000", image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400"},
+            {id: 163, name: "Tiramisu", category: "Italiya", description: "Shirinlik", price: "35,000", image: "https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400"},
+            {id: 164, name: "Cannoli", category: "Italiya", description: "Shirinlik", price: "20,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 165, name: "Panna Cotta", category: "Italiya", description: "Shirinlik", price: "25,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 166, name: "Gelato", category: "Italiya", description: "Muzqaymoq", price: "18,000", image: "https://images.unsplash.com/photo-1563729768-6af7c46b6eb5?w=400"},
+            {id: 167, name: "Profiterol", category: "Italiya", description: "Shirinlik", price: "28,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 168, name: "Cheesecake", category: "Italiya", description: "Tort", price: "35,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 169, name: "Ravioli", category: "Italiya", description: "Makaron", price: "40,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 170, name: "Gnocchi", category: "Italiya", description: "Kartoshkali", price: "38,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 171, name: "Fettuccine", category: "Italiya", description: "Makaron", price: "42,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 172, name: "Spaghetti", category: "Italiya", description: "Makaron", price: "35,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 173, name: "Penne", category: "Italiya", description: "Makaron", price: "32,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 174, name: "Fusilli", category: "Italiya", description: "Makaron", price: "32,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 175, name: "Farfalle", category: "Italiya", description: "Makaron", price: "30,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 176, name: "Bruschetta", category: "Italiya", description: "Q appetizer", price: "22,000", image: "https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400"},
+            {id: 177, name: "Caprese Salad", category: "Italiya", description: "Salat", price: "25,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            {id: 178, name: "Insalata Mista", category: "Italiya", description: "Aralash salat", price: "20,000", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"},
+            {id: 179, name: "Carpaccio", category: "Italiya", description: "Go'sht", price: "45,000", image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"},
+            {id: 180, name: "Vitello Tonnato", category: "Italiya", description: "Go'sht", price: "48,000", image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"},
+            {id: 181, name: "Osso Buco", category: "Italiya", description: "Go'sht", price: "52,000", image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"},
+            {id: 182, name: "Saltimbocca", category: "Italiya", description: "Tovuq", price: "42,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 183, name: "Chicken Parmesan", category: "Italiya", description: "Tovuq", price: "40,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 184, name: "Milanese", category: "Italiya", description: "Kotlet", price: "38,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 185, name: "Arancini", category: "Italiya", description: "Kopti", price: "22,000", image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400"},
+            {id: 186, name: "Mozzarella di Bufala", category: "Italiya", description: "Pishloq", price: "35,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 187, name: "Parmigiano Reggiano", category: "Italiya", description: "Pishloq", price: "40,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 188, name: "Gorgonzola", category: "Italiya", description: "Pishloq", price: "38,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 189, name: "Espresso", category: "Italiya", description: "Qahva", price: "10,000", image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400"},
+            {id: 190, name: "Cappuccino", category: "Italiya", description: "Qahva", price: "12,000", image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400"},
+            {id: 191, name: "Latte Macchiato", category: "Italiya", description: "Qahva", price: "14,000", image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400"},
+            {id: 192, name: "Americano", category: "Italiya", description: "Qahva", price: "10,000", image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400"},
+            {id: 193, name: "Macchiato", category: "Italiya", description: "Qahva", price: "12,000", image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400"},
+            {id: 194, name: "Mocha", category: "Italiya", description: "Qahva", price: "15,000", image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400"},
+            {id: 195, name: "Caffè Corretto", category: "Italiya", description: "Qahva", price: "18,000", image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400"},
+            {id: 196, name: "Grappa", category: "Italiya", description: "Ichimlik", price: "30,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+            {id: 197, name: "Limoncello", category: "Italiya", description: "Ichimlik", price: "25,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+            {id: 198, name: "Chianti", category: "Italiya", description: "Sharob", price: "45,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+            {id: 199, name: "Prosecco", category: "Italiya", description: "Sharob", price: "40,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+            {id: 200, name: "Aperol Spritz", category: "Italiya", description: "Kokteyl", price: "35,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"}
+        ];
+        
+        // Add more items to reach 500
+        const additionalFoods = [
+            // CHINESE (201-250)
+            {id: 201, name: "Kung Pao Chicken", category: "Xitoy", description: "Xitoy tovuq", price: "42,000", image: "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=400"},
+            {id: 202, name: "Fried Rice", category: "Xitoy", description: "Qovurilgan guruch", price: "28,000", image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"},
+            {id: 203, name: "Dim Sum", category: "Xitoy", description: "Kichik taomlar", price: "32,000", image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400"},
+            {id: 204, name: "Peking Duck", category: "Xitoy", description: "Pekin o'rdak", price: "65,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 205, name: "Hot and Sour Soup", category: "Xitoy", description: "Achchiq sho'rva", price: "22,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 206, name: "Spring Rolls", category: "Xitoy", description: "Bahor ro'llari", price: "18,000", image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"},
+            {id: 207, name: "Sweet and Sour Pork", category: "Xitoy", description: "Shirin achchiq", price: "45,000", image: "https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400"},
+            {id: 208, name: "Wonton Soup", category: "Xitoy", description: "Wonton sho'rvasi", price: "25,000", image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400"},
+            {id: 209, name: "Chow Mein", category: "Xitoy", description: "Makaron", price: "32,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 210, name: "Mapo Tofu", category: "Xitoy", description: "Tofu", price: "28,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 211, name: "General Tso Chicken", category: "Xitoy", description: "Tovuq", price: "38,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 212, name: "Beef and Broccoli", category: "Xitoy", description: "Go'sht va brokkoli", price: "40,000", image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"},
+            {id: 213, name: "Egg Foo Young", category: "Xitoy", description: "Tuxum", price: "25,000", image: "https://images.unsplash.com/photo-1529694157872-4e0c0f3b238b?w=400"},
+            {id: 214, name: "Chow Fun", category: "Xitoy", description: "Guruch", price: "30,000", image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"},
+            {id: 215, name: "Dan Dan Noodles", category: "Xitoy", description: "Lazya", price: "28,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 216, name: "Sichuan Pork", category: "Xitoy", description: "Cho'chqa go'shti", price: "42,000", image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"},
+            {id: 217, name: "Steamed Fish", category: "Xitoy", description: "Pishirilgan baliq", price: "48,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 218, name: "Fish in Ginger Sauce", category: "Xitoy", description: "Baliq sousda", price: "45,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 219, name: "Salt and Pepper Shrimp", category: "Xitoy", description: "Kerevish", price: "38,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 220, name: "Kung Pao Shrimp", category: "Xitoy", description: "Kerevish", price: "42,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 221, name: "Sesame Chicken", category: "Xitoy", description: "Tovuq", price: "36,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 222, name: "Orange Chicken", category: "Xitoy", description: "Tovuq", price: "35,000", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400"},
+            {id: 223, name: "Beijing Beef", category: "Xitoy", description: "Go'sht", price: "44,000", image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"},
+            {id: 224, name: "Mongolian Beef", category: "Xitoy", description: "Go'sht", price: "42,000", image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"},
+            {id: 225, name: "Lo Mein", category: "Xitoy", description: "Makaron", price: "30,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 226, name: "Chow Fun", category: "Xitoy", description: "Makaron", price: "28,000", image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400"},
+            {id: 227, name: "Moo Shu Pork", category: "Xitoy", description: "Cho'chqa", price: "40,000", image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"},
+            {id: 228, name: "Sizzling Rice Soup", category: "Xitoy", description: "Sho'rva", price: "28,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 229, name: "Egg Drop Soup", category: "Xitoy", description: "Tuxum sho'rva", price: "18,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 230, name: "Hot and Sour Soup", category: "Xitoy", description: "Sho'rva", price: "20,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 231, name: "Wonton", category: "Xitoy", description: "Wonton", price: "22,000", image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400"},
+            {id: 232, name: "Spring Roll", category: "Xitoy", description: "Rulet", price: "15,000", image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"},
+            {id: 233, name: "Egg Roll", category: "Xitoy", description: "Tuxum rulet", price: "15,000", image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"},
+            {id: 234, name: "Crab Rangoon", category: "Xitoy", description: "Krab", price: "25,000", image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"},
+            {id: 235, name: "Fried Wonton", category: "Xitoy", description: "Qovurilgan", price: "18,000", image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"},
+            {id: 236, name: "Steamed Dumplings", category: "Xitoy", description: "Bug'langan", price: "22,000", image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400"},
+            {id: 237, name: "Pan-Fried Dumplings", category: "Xitoy", description: "Qovurilgan", price: "20,000", image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400"},
+            {id: 238, name: "Soup Dumplings", category: "Xitoy", description: "Sho'rvali", price: "28,000", image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400"},
+            {id: 239, name: "Moon Cake", category: "Xitoy", description: "Shirinlik", price: "25,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 240, name: "Red Bean Soup", category: "Xitoy", description: "Shirin sho'rva", price: "15,000", image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"},
+            {id: 241, name: "Egg Custard", category: "Xitoy", description: "Tuxum", price: "12,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 242, name: "Jelly", category: "Xitoy", description: "Kisil", price: "10,000", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"},
+            {id: 243, name: "Green Tea", category: "Xitoy", description: "Yashil choy", price: "8,000", image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400"},
+            {id: 244, name: "Jasmine Tea", category: "Xitoy", description: "Choy", price: "8,000", image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400"},
+            {id: 245, name: "Chrysanthemum Tea", category: "Xitoy", description: "Choy", price: "10,000", image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400"},
+            {id: 246, name: "Bubble Tea", category: "Xitoy", description: "Kokteyl", price: "18,000", image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+            {id: 247, name: "Lychee Tea", category: "Xitoy", description: "Choy", price: "15,000", image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400"},
+            {id: 248, name: "Ginger Tea", category: "Xitoy", description: "Choy", price: "10,000", image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400"},
+            {id: 249, name: "Plum Tea", category: "Xitoy", description: "Choy", price: "12,000", image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400"},
+            {id: 250, name: "Wolfberry Tea", category: "Xitoy", description: "Choy", price: "15,000", image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400"}
+        ];
+        
+        // Combine all foods
+        const allFoods = [...foods, ...additionalFoods];
+        
+        // Add more foods programmatically to reach 500
+        for (let i = 251; i <= 500; i++) {
+            const categories = ["Fast Food", "Yevropa", "Lotyn Amerika", "Yaponiya", "Koreya", "Mehnat Sharq", "Afrika", "Janubiy Afrika", "Avstraliya", "Shimoliy Afrika"];
+            const category = categories[Math.floor(Math.random() * categories.length)];
+            allFoods.push({
+                id: i,
+                name: `Taom ${i}`,
+                category: category,
+                description: `Mazali taom ${i}`,
+                price: Math.floor(Math.random() * 50 + 10) * 1000 + ",000",
+                image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400"
+            });
+        }
+        
+        function searchFood() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const resultsContainer = document.getElementById('results');
+            const resultsCount = document.getElementById('resultsCount');
+            
+            if (query.length < 1) {
+                resultsContainer.innerHTML = '<p class="no-results">Iltimos, so\'z kiriting</p>';
+                resultsCount.textContent = '';
+                return;
+            }
+            
+            const results = allFoods.filter(food => 
+                food.name.toLowerCase().includes(query) ||
+                food.category.toLowerCase().includes(query) ||
+                food.description.toLowerCase().includes(query)
+            );
+            
+            if (results.length === 0) {
+                resultsContainer.innerHTML = '<p class="no-results">Hech narsa topilmadi</p>';
+                resultsCount.textContent = '';
+                return;
+            }
+            
+            resultsCount.textContent = `${results.length} ta taom topildi`;
+            
+            resultsContainer.innerHTML = results.map((food, index) => `
+                <div class="result-card" style="animation-delay: ${index * 0.05}s" onclick="showFood(${food.id})">
+                    <img src="${food.image}" alt="${food.name}">
+                    <div class="result-card-content">
+                        <h3>${food.name}</h3>
+                        <p>${food.description}</p>
+                        <p><strong>${food.price} so'm</strong></p>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showFood(id) {
+            alert(`Taom ID: ${id}\n\nBatafsil ma'lumot tez kunda qo'shiladi!`);
+        }
+        
+        // Enter key search
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchFood();
+            }
+        });
+        
+        // Load saved query
+        window.addEventListener('load', function() {
+            const query = localStorage.getItem('searchQuery');
+            if (query) {
+                document.getElementById('searchInput').value = query;
+                localStorage.removeItem('searchQuery');
+                searchFood();
+            }
+        });
+    </script>
+</body>
+</html>

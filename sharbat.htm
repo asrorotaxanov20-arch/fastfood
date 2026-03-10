@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fresh Juice - Dunyo Ovqatlari</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .food-page { padding: 120px 0 50px; min-height: 100vh; }
+        .food-container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+        .food-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 50px; }
+        .food-image img { width: 100%; border-radius: 20px; box-shadow: var(--shadow); }
+        .food-info h1 { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 15px; }
+        .food-category { display: inline-block; padding: 8px 20px; background: rgba(201, 162, 39, 0.2); color: var(--primary-color); border-radius: 20px; margin-bottom: 20px; }
+        .food-price { font-size: 2rem; font-weight: 700; color: var(--primary-color); margin-bottom: 20px; }
+        .food-description { color: var(--text-muted); line-height: 1.8; margin-bottom: 30px; }
+        .order-btn { padding: 15px 40px; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); border: none; border-radius: 30px; color: #000; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: var(--transition); }
+        .order-btn:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(201, 162, 39, 0.4); }
+        .recipe-section { background: var(--card-bg); border-radius: 20px; padding: 30px; margin-bottom: 30px; }
+        .recipe-section h2 { color: var(--primary-color); margin-bottom: 20px; }
+        .ingredients-list li {
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .steps-list { list-style: none; counter-reset: steps; }
+        .steps-list li { padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; margin-bottom: 15px; position: relative; padding-left: 60px; }
+        .steps-list li::before { counter-increment: steps; content: counter(steps); position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; background: var(--primary-color); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        .back-link { display: inline-flex; align-items: center; gap: 10px; color: var(--text-muted); text-decoration: none; margin-bottom: 30px; transition: var(--transition); }
+        .back-link:hover { color: var(--primary-color); }
+        @media (max-width: 768px) { .food-hero { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo"><span class="logo-icon">🥘</span><span class="logo-text">DunyoOvqatlari</span></div>
+            <nav class="nav">
+                <a href="index.htm" class="nav-link">Bosh sahifa</a>
+                <a href="search.htm" class="nav-link">Qidiruv</a>
+            </nav>
+        </div>
+    </header>
+    <section class="food-page">
+        <div class="food-container">
+            <a href="search.htm" class="back-link">← Qidiruvga qaytish</a>
+            <div class="food-hero">
+                <div class="food-image"><img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800" alt="Fresh Juice"></div>
+                <div class="food-info">
+                    <span class="food-category">Ichimlik</span>
+                    <h1>Fresh Juice</h1>
+                    <div class="food-price">15,000 so'm</div>
+                    <p class="food-description">Yangidan siqilgan meva sharbatlari. Apelsin, olma, sabzi va limonning to'yingan aralashmasi. Vitaminlar va foydali moddalar boy.</p>
+                    <button class="order-btn" onclick="addToCart('Fresh Juice', 15000)">Buyurtma berish</button>
+                </div>
+            </div>
+            <div class="recipe-section">
+                <h2>🧂 Ingredientlar</h2>
+                <ul class="ingredients-list">
+                    <li>🍊 3ta apelsin</li>
+                    <li>🍎 2ta olma</li>
+                    <li>🥕 1ta sabzi</li>
+                    <li>🍋 1ta limon</li>
+                    <li>🧊 muz (ixtiyoriy)</li>
+                    <li>🍬 shakar (ixtiyoriy)</li>
+                </ul>
+            </div>
+            <div class="recipe-section">
+                <h2>👨‍🍳 Tayyorlash</h2>
+                <ol class="steps-list">
+                    <li>Mevalarni yuvang va qobig'ini to'kting.</li>
+                    <li>Sabzini peel qiling va bo'laklarga kesing.</li>
+                    <li>Apelsin va limonning sharbatini siqing.</li>
+                    <li>Olma va sabzini blenderda bosing.</li>
+                    <li>Barcha sharbatlarni aralashtiring.</li>
+                    <li>Ixtiyoriy muz qo'shing.</li>
+                    <li>Sovuq holda iste'mol qiling.</li>
+                </ol>
+            </div>
+        </div>
+    </section>
+    <script src="java.js"></script>
+</body>
+</html>

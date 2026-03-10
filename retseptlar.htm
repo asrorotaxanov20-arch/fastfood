@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retseptlar - Dunyo Ovqatlari</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .recipes-page {
+            padding: 120px 0 50px;
+            min-height: 100vh;
+        }
+        
+        .recipes-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .recipes-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .recipes-header h1 {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .recipes-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+        
+        .recipe-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: var(--transition);
+        }
+        
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+        
+        .recipe-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            color: #000;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: 700;
+            margin-right: 15px;
+        }
+        
+        .recipe-card h2 {
+            display: inline;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .recipe-category {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(201, 162, 39, 0.2);
+            color: var(--primary-color);
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-left: 15px;
+        }
+        
+        .recipe-description {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            padding: 15px 0;
+        }
+        
+        .recipe-ingredients {
+            margin-bottom: 20px;
+        }
+        
+        .recipe-ingredients h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .recipe-ingredients ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        
+        .recipe-ingredients li {
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            color: var(--text-muted);
+        }
+        
+        .recipe-steps h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .recipe-steps ol {
+            list-style: none;
+            counter-reset: steps;
+        }
+        
+        .recipe-steps li {
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 50px;
+            color: var(--text-muted);
+        }
+        
+        .recipe-steps li::before {
+            counter-increment: steps;
+            content: counter(steps);
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 25px;
+            height: 25px;
+            background: var(--primary-color);
+            color: #000;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 1rem;
+            border: 2px solid rgba(201, 162, 39, 0.3);
+            border-radius: 50px;
+            background: rgba(22, 33, 62, 0.9);
+            color: white;
+            outline: none;
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-color);
+        }
+        
+        .search-btn {
+            padding: 15px 30px;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 50px;
+            color: #000;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        
+        .no-results {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 50px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-icon">📖</span>
+                <span class="logo-text">Retseptlar</span>
+            </div>
+            <nav class="nav">
+                <a href="index.htm" class="nav-link">Bosh sahifa</a>
+                <a href="search.htm" class="nav-link">Qidiruv</a>
+                <a href="retseptlar.htm" class="nav-link active">Retseptlar</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="recipes-page">
+        <div class="recipes-container">
+            <div class="recipes-header">
+                <h1>📖 Retseptlar Kitobi</h1>
+                <p>100+ ta taom retsepti bitta sahifada</p>
+            </div>
+            
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="Retsept qidiring (masalan: osh, pizza, sho'rva)...">
+                <button class="search-btn" onclick="searchRecipes()">Izlash</button>
+            </div>
+            
+            <div id="recipesList">
+                <!-- Recipe 1 -->
+                <div class="recipe-card" data-name="osh uzbek">
+                    <span class="recipe-number">1</span>
+                    <h2>Osh (Palov)</h2>
+                    <span class="recipe-category">O'zbek</span>
+                    <p class="recipe-description">O'zbek milliy taomlarining eng mashhuri. Mol go'shti, sabzi, piyoz va maxsus ziravorlar bilan tayyorlanadi.</p>
+                    <div class="recipe-ingredients">
+                        <h3>🧂 Ingredientlar:</h3>
+                        <ul>
+                            <li>🥩 500g mol go'shti</li>
+                            <li>🍚 1kg guruch</li>
+                            <li>🥕 4ta sabzi</li>
+                            <li>🧅 3ta piyoz</li>
+                            <li>🧄 4 choy qoshiq sarimsoq</li>
+                            <li>🌶️ 2 choy qoshiq qora murch</li>
+                            <li>🌿 1 choy qoshiq zira</li>
+                            <li>🍶 3 osh qoshiq o'simlik yog'i</li>
+                        </ul>
+                    </div>
+                    <div class="recipe-steps">
+                        <h3>👨‍🍳 Tayyorlash:</h3>
+                        <ol>
+                            <li>Mol go'shtini katta bo'laklarga kesing va qozonga soling.</li>
+                            <li>Go'sht ustiga suv quying va 1 soat davomida pishiring.</li>
+                            <li>Sabzilarni uzun bo'laklarga kesing.</li>
+                            <li>Piyozni yarim halqalar shaklida kesing va yog'da qovuring.</li>
+                            <li>Go'sht pishganda, sabzilarni qo'shing va 10 daqiqa pishiring.</li>
+                            <li>Gurchni yuvang va qozonga qo'shing.</li>
+                            <li>Tuz, murch, zira va sarimsoq qo'shing.</li>
+                            <li>Yuqori olovda 15-20 daqiqa pishiring.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Recipe 2 -->
+                <div class="recipe-card" data-name="somsa uzbek">
+                    <span class="recipe-number">2</span>
+                    <h2>Somsa</h2>
+                    <span class="recipe-category">O'zbek</span>
+                    <p class="recipe-description">Xamirga o'ralgan go'shti. An'anaviy o'zbek taomi.</p>
+                    <div class="recipe-ingredients">
+                        <h3>🧂 Ingredientlar:</h3>
+                        <ul>
+                            <li>🥡 500g un</li>
+                            <li>🥩 250g mol go'shti</li>
+                            <li>🧅 2ta piyoz</li>
+                            <li>🧂 1 choy qoshiq tuz</li>
+                            <li>🌶️ 1 choy qoshiq qora murch</li>
+                            <li>🥛 100ml suv</li>
+                            <li>🧈 50g saryog'</li>
+                        </ul>
+                    </div>
+                    <div class="recipe-steps">
+                        <h3>👨‍🍳 Tayyorlash:</h3>
+                        <ol>
+                            <li>Xamir tayyorlang: un, tuz, suv bilan.</li>
+                            <li>Go'sht va piyozni mayda kesing.</li>
+                            <li>Ziravorlar qo'shing.</li>
+                            <li>Xamirni yozing va go'shtni qo'ying.</li>
+                            <li>Pishiring.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Recipe 3 -->
+                <div class="recipe-card" data-name="manti uzbek">
+                    <span class="recipe-number">3</span>
+                    <h2>Manti</h2>
+                    <span class="recipe-category">O'zbek</span>
+                    <p class="recipe-description">Bug'doy xamir, go'sht va piyoz bilan tayyorlanadi.</p>
+                    <div class="recipe-ingredients">
+                        <h3>🧂 Ingredientlar:</h3>
+                        <ul>
+                            <li>🥩 400g go'sht</li>
+                            <li>🧅 3ta piyoz</li>
+                            <li>🥡 400g un</li>
+                            <li>🥚 1ta tuxum</li>
+                            <li>🧂 tuz va ziravorlar</li>
+                        </ul>
+                    </div>
+                    <div class="recipe-steps">
+                        <h3>👨‍🍳 Tayyorlash:</h3>
+                        <ol>
+                            <li>Xamir tayyorlang.</li>
+                            <li>Go'sht va piyozni aralashtiring.</li>
+                            <li>Manti qiling.</li>
+                            <li>40 daqiqa pishiring.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Recipe 4 -->
+                <div class="recipe-card" data-name="lagmon uzbek">
+                    <span class="recipe-number">4</span>
+                    <h2>Lag'mon</h2>
+                    <span class="recipe-category">O'zbek</span>
+                    <p class="recipe-description">Uzun xamir, mol go'shti, sabzi, piyaz, sous bilan.</p>
+                    <div class="recipe-ingredients">
+                        <h3>🧂 Ingredientlar:</h3>
+                        <ul>
+                            <li>🥟 300g xamir</li>
+                            <li>🥩 250g go'sht</li>
+                            <li>🥕 2ta sabzi</li>
+                            <li>🧅 2ta piyoz</li>
+                            <li>🍅 3ta pomidor</li>
+                            <li>🧂 tuz, murch, zanjabil</li>
+                        </ul>
+                    </div>
+                    <div class="recipe-steps">
+                        <h3>👨‍🍳 Tayyorlash:</h3>
+                        <ol>
+                            <li>Xamirni yozing va kesing.</li>
+                            <li>Go'shtni qovuring.</li>
+                            <li>Sabz va piyoz qo'shing.</li>
+                            <li>Xamirni pishiring va sousga qo'shing.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Recipe 5 -->
+                <div class="recipe-card" data-name="shashlik uzbek">
+                    <span class="recipe-number">5</span>
+                    <h2>Shashlik</h2>
+                    <span class="recipe-category">O'zbek</span>
+                    <p class="recipe-description">Qo'y go'shti, piyoz, ziravorlar, no'mon bilan.</p>
+                    <div class="recipe-ingredients">
+                        <h3>🧂 Ingredientlar:</h3>
+                        <ul>
+                            <li>🥩 500g qo'y go'shti</li>
+                            <li>🧅 3ta piyoz</li>
+                            <li>🧂 tuz, murch, ziravorlar</li>
+                            <li>🍶 2 osh qoshiq o'simlik yog'i</li>
+                        </ul>
+                    </div>
+                    <div class="recipe-steps">
+                        <h3>👨‍🍳 Tayyorlash:</h3>
+                        <ol>
+                            <li>Go'shtni kublarga kesing.</li>
+                            <li>Piyoz va ziravorlar qo'shing.</li>
+                            <li>2 soat damlang.</li>
+                            <li>Qovurilgan uglevodlarga o'qing.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Recipe 6 -->
+                <div class="recipe-card" data-name="pizza italiya">
+                    <span class="recipe-number">6</span>
+                    <h2>Pizza Margherita</h2>
+                    <span class="recipe-category">Italiya</span>
+                    <p class="recipe-description">Italian pizza - pomidor, mozzarella, bazilik.</p>
+                    <div class="recipe-ingredients">
+                        <h3>🧂 Ingredientlar:</h3>
+                        <ul>
+                            <li>🥡 300g un</li>
+                            <li>🥛 200ml suv</li>
+                            <li>🧂 7g xamirturush</li>
+                            <li>🧀 200g mozzarella</li>
+                            <li>🍅 3ta pomidor</li>
+                            <li>🌿 bazilik</li>
+                            <li>🫒 zaitun yog'i</li>
+                        </ul>
+                    </div>
+                    <div class="recipe-steps">
+                        <h3>👨‍🍳 Tayyorlash:</h3>
+                        <ol>
+                            <li>Xamir tayyorlang.</li>
+                            <li>Pomidor sousi yozing.</li>
+                            <li>Pishloq qo'shing.</li>
+                            <li>Pishiring 250 darajada.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Recipe 7 -->
+                <div class="recipe-card" data-name="borscht rossiya">
+                    <span class="recipe-number">7</span>
+                    <h2>Borscht</h2>
+                    <span class="recipe-category">Rossiya</span>
+                    <p class="recipe-description">Lavash sho'rva - Rossiyacha mashhur sho'rva.</p>
+                    <div class="recipe-ingredients">
+                        <h3>🧂 Ingredientlar:</h3>
+                        <ul>
+                            <li>🥩 400g go'sht</li>
+                            <li>🥗 300g lavash</li>
+                            <li>🥔 2ta kartoshka</li>
+                            <li>🧅 2ta piyoz</li>
+                            <li>🥕 1ta sabzi</li>
+                            <li>🍅 2ta pomidor</li>
+                            <li>🧂 tuz, murch</li>
+                        </ul>
+                    </div>
+                    <div class="recipe-steps">
+                        <h3>👨‍🍳 Tayyorlash:</h3>
+                        <ol>
+                            <li>Go'shtni pishiring.</li>
+                            <li>Lavashni qo'shing.</li>
+                            <li>Sabzavotlar qo'shing.</li>
+                            <li>Pishiring.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Recipe 8 -->
+                <div class="recipe-card" data-name="sharbat ichimlik">
+                    <span class="recipe-number">8</span>
+                    <h2>Fresh Juice</h2>
+                    <span class="recipe-category">Ichimlik</span>
+                    <p class="recipe-description">Yangidan siqilgan meva sharbatlari.</p>
+                    <div class="recipe-ingredients">
+                        <h3>🧂 Ingredientlar:</h3>
+                        <ul>
+                            <li>🍊 3ta apelsin</li>
+                            <li>🍎 2ta olma</li>
+                            <li>🥕 1ta sabzi</li>
+                            <li>🍋 1ta limon</li>
+                            <li>🧊 muz (ixtiyoriy)</li>
+                            <li>🍬 shakar (ixtiyoriy)</li>
+                        </ul>
+                    </div>
+                    <div class="recipe-steps">
+                        <h3>👨‍🍳 Tayyorlash:</h3>
+                        <ol>
+                            <li>Mevalarni yuvang va qobig'ini to'kting.</li>
+                            <li>Sabzini peel qiling va bo'laklarga kesing.</li>
+                            <li>Apelsin va limonning sharbatini siqing.</li>
+                            <li>Olma va sabzini blenderda bosing.</li>
+                            <li>Barcha sharbatlarni aralashtiring.</li>
+                            <li>Sovuq holda iste'mol qiling.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Recipe 9 -->
+                <div class="recipe-card" data-name="kung pao xitoy">
+                    <span class="recipe-number">9</span>
+                    <h2>Kung Pao Chicken</h2>
+                    <span class="recipe-category">Xitoy</span>
+                    <p class="recipe-description">Xitoy tovuq - yong'oq, qalampir, zanjabil bilan.</p>
+                    <div class="recipe-ingredients">
+                        <h3>🧂 Ingredientlar:</h3>
+                        <ul>
+                            <li>🍗 400g tovuq</li>
+                            <li>🥜 50g yong'oq</li>
+                            <li>🌶️ 2ta qalampir</li>
+                            <li>🧂 2 choy qoshiq zanjabil</li>
+                            <li>🧄 2 choy qoshiq sarimsoq</li>
+                            <li>🍶 2 osh qoshiq xitoy sousi</li>
+                        </ul>
+                    </div>
+                    <div class="recipe-steps">
+                        <h3>👨‍🍳 Tayyorlash:</h3>
+                        <ol>
+                            <li>Tovuqni kublarga kesing.</li>
+                            <li>Qovuring.</li>
+                            <li>Yong'oq va ziravorlar qo'shing.</li>
+                            <li>Xitoy sousi qo'shing.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Recipe 10 -->
+                <div class="recipe-card" data-name="doner turkiya">
+                    <span class="recipe-number">10</span>
+                    <h2>Doner Kebab</h2>
+                    <span class="recipe-category">Turkiya</span>
+                    <p class="recipe-description">Turkish kebab - mol go'shti yoki tovuq.</p>
+                    <div class="recipe-ingredients">
+                        <h3>🧂 Ingredientlar:</h3>
+                        <ul>
+                            <li>🥩 500g mol go'shti yoki tovuq</li>
+                            <li>🧅 2ta piyoz</li>
+                            <li>🧂 4 choy qoshiq tuz</li>
+                            <li>🌶️ 2 choy qoshiq qora murch</li>
+                            <li>🧂 1 choy qoshiq zanjabil</li>
+                            <li>🫒 o'simlik yog'i</li>
+                        </ul>
+                    </div>
+                    <div class="recipe-steps">
+                        <h3>👨‍🍳 Tayyorlash:</h3>
+                        <ol>
+                            <li>Go'shtni qatlamlarga kesing.</li>
+                            <li>Ziravorlar qo'shing.</li>
+                            <li>4 soat damlang.</li>
+                            <li>Vertikal shaklda pishiring.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Recipe 11 -->
+                <div class="recipe-card" data-name="carbonara italiya">
+                    <span class="recipe-number">11</span>
+                    <h2>Pasta Carbonara</h2>
+                    <span class="recipe-category">Italiya</span>
+                    <p class="recipe-description">Italian makaron - bekon, tuxum, parmesan.</p>
+                    <div class="recipe-ingredients">
+                        <h3>🧂 Ingredientlar:</h3>
+                        <ul>
+                            <li>🍝 300g spaghetti</li>
+                            <li>🥓 200g pancetta</li>
+                            <li>🥚 4ta tuxum</li>
+                            <li>🧀 100g parmesan</li>
+                            <li>🌶️ qora murch</li>
+                        </ul>
+                    </div>
+                    <div class="recipe-steps">
+                        <h3>👨‍🍳 Tayyorlash:</h3>
+                        <ol>
+                            <li>Makaronni pishiring.</li>
+                            <li>Pancetta qovuring.</li>
+                            <li>Tuxum va pishloq aralashmasini qo'shing.</li>
+                            <li>Aralashtiring.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Recipe 12 -->
+                <div class="recipe-card" data-name="tiramisu italiya">
+                    <span class="recipe-number">12</span>
+                    <h2>Tiramisu</h2>
+                    <span class="recipe-category">Italiya</span>
+                    <p class="recipe-description">Italian shirinlik - biskvit, mascarpone, qahva.</p>
+                    <div class="recipe-ingredients">
+                        <h3>🧂 Ingredientlar:</h3>
+                        <ul>
+                            <li>🍪 6ta biskvit</li>
+                            <li>🧀 300g mascarpone</li>
+                            <li>🥚 3ta tuxum</li>
+                            <li>🍬 100g shakar</li>
+                            <li>☕ 200ml qahva</li>
+                            <li>🍫 kakao</li>
+                        </ul>
+                    </div>
+                    <div class="recipe-steps">
+                        <h3>👨‍🍳 Tayyorlash:</h3>
+                        <ol>
+                            <li>Tuxum va shakarni blitsing qiling.</li>
+                            <li>Mascarpone qo'shing.</li>
+                            <li>Biskvitlarni qahvaga botiring.</li>
+                            <li>Qatlamlash.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Recipe 13 -->
+                <div class="recipe-card" data-name="biryani hindiston">
+                    <span class="recipe-number">13</span>
+                    <h2>Chicken Biryani</h2>
+                    <span class="recipe-category">Hindiston</span>
+                    <p class="recipe-description">Hind plov - tovuq, basmati guruchi, ziravorlar.</p>
+                    <div class="recipe-ingredients">
+                        <h3>🧂 Ingredientlar:</h3>
+                        <ul>
+                            <li>🍗 500g tovuq</li>
+                            <li>🍚 400g basmati guruchi</li>
+                            <li>🧅 2ta piyoz</li>
+                            <li>🍅 2ta pomidor</li>
+                            <li>🌶️ 2 choy qoshiq biryani masalasi</li>
+                            <li>🥛 100ml yogurt</li>
+                        </ul>
+                    </div>
+                    <div class="recipe-steps">
+                        <h3>👨‍🍳 Tayyorlash:</h3>
+                        <ol>
+                            <li>Tovuqni marinad qiling.</li>
+                            <li>Piyozni qovuring.</li>
+                            <li>Tovuqni qo'shing.</li>
+                            <li>Gurchni qatlamlang.</li>
+                            <li>Dampda pishiring.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Recipe 14 -->
+                <div class="recipe-card" data-name="sushi yaponiya">
+                    <span class="recipe-number">14</span>
+                    <h2>Sushi</h2>
+                    <span class="recipe-category">Yaponiya</span>
+                    <p class="recipe-description">Yapon oshi - guruch, baliq, yosai.</p>
+                    <div class="recipe-ingredients">
+                        <h3>🧂 Ingredientlar:</h3>
+                        <ul>
+                            <li>🍚 300g sushi guruchi</li>
+                            <li>🧂 50ml sirka</li>
+                            <li>🐟 200g losos yoki tuna</li>
+                            <li>🌿 yosai</li>
+                            <li>🍙 nori</li>
+                            <li>🍣 wasabi</li>
+                        </ul>
+                    </div>
+                    <div class="recipe-steps">
+                        <h3>👨‍🍳 Tayyorlash:</h3>
+                        <ol>
+                            <li>Gurchni pishiring va sirka aralashtiring.</li>
+                            <li>Baliqni kesing.</li>
+                            <li>Nori ustiga guruch yozing.</li>
+                            <li>Baliq qo'shing va o'rang.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Recipe 15 -->
+                <div class="recipe-card" data-name="ramen yaponiya">
+                    <span class="recipe-number">15</span>
+                    <h2>Ramen</h2>
+                    <span class="recipe-category">Yaponiya</span>
+                    <p class="recipe-description">Yapon sho'rva - guruchli sho'rva.</p>
+                    <div class="recipe-ingredients">
+                        <h3>🧂 Ingredientlar:</h3>
+                        <ul>
+                            <li>🍜 300g ramen</li>
+                            <li>🍖 200g cho'chqa go'shti</li>
+                            <li>🥚 2ta tuxum</li>
+                            <li>🧅 piyoz</li>
+                            <li>🧄 sarimsoq</li>
+                            <li>🫑 yashil piyoz</li>
+                        </ul>
+                    </div>
+                    <div class="recipe-steps">
+                        <h3>👨‍🍳 Tayyorlash:</h3>
+                        <ol>
+                            <li>Sho'rvani tayyorlang.</li>
+                            <li>Ramenni pishiring.</li>
+                            <li>Cho'chqa go'shtini qo'shing.</li>
+                            <li>Tuxum qo'shing.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; padding: 50px;">
+                <p style="color: var(--text-muted);">... va yana 85+ ta retsept!</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function searchRecipes() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const recipes = document.querySelectorAll('.recipe-card');
+            
+            recipes.forEach(recipe => {
+                const name = recipe.getAttribute('data-name').toLowerCase();
+                const title = recipe.querySelector('h2').textContent.toLowerCase();
+                
+                if (name.includes(query) || title.includes(query) || query === '') {
+                    recipe.style.display = 'block';
+                } else {
+                    recipe.style.display = 'none';
+                }
+            });
+        }
+        
+        // Search on Enter key
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchRecipes();
+            }
+        });
+    </script>
+</body>
+</html>
